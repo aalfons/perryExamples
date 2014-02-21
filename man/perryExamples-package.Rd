@@ -16,13 +16,16 @@ Type: \tab Package\cr
 Version: \tab 0.1.0\cr
 Date: \tab 2014-02-21\cr
 Depends: \tab R (>= 2.14.1), perry, robustbase\cr
-Imports: \tab stats\cr
+Imports: \tab stats, quantreg\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
 
 Index:
 \preformatted{
+ladlasso                LAD-lasso with penalty parameter selection
+lmridge                 Ridge regression with penalty parameter
+                        selection
 perry-methods           Resampling-based prediction error for fitted
                         models
 perryExamples-package   Examples for integrating prediction error
