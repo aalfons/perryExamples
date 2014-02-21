@@ -3,10 +3,26 @@
 #         Erasmus Universiteit Rotterdam
 # --------------------------------------
 
+#' @S3method predict ladlasso
+#' @S3method predict lmridge
+predict.ladlasso <- predict.lmridge <- function(object, newdata, ...) {
+  # initializations
+  coef <- coef(object)
+  # interpret vector as row
+  newdata <- if(is.null(dim(newdata))) t(newdata) else as.matrix(newdata)
+  # if model has an intercept, add a column of ones to the new 
+  # data matrix (unless it already contains intercept column)
+  if(object$intercept) newdata <- addIntercept(newdata, check=TRUE)
+  # check dimensions
+  p <- if(is.null(dim(coef))) length(coef) else nrow(coef)
+  if(ncol(newdata) != p) stop(sprintf("new data must have %d columns", p))
+  # compute predictions
+  drop(newdata %*% coef)
+}
+
 #' @S3method predict lts
 #' @import robustbase
-
-# there is no predict() method for "lts" objects in package 'robustbase'
+## there is no predict() method for "lts" objects in package 'robustbase'
 predict.lts <- function(object, newdata, 
                         fit = c("reweighted", "raw", "both"), ...) {
   ## initializations
@@ -47,12 +63,4 @@ predict.lts <- function(object, newdata,
   ## compute predictions
   # ensure that a vector is returned if only one fit is requested
   drop(newdata %*% coef)
-}
-
-
-#' @S3method predict perryTuning
-predict.perryTuning <- function(object, ...) {
-  finalModel <- object$finalModel
-  if(is.null(finalModel)) stop("final model not available")
-  predict(finalModel, ...)
 }
