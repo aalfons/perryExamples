@@ -1,0 +1,8 @@
+S3method(perry,lm)
+S3method(perry,lmrob)
+S3method(perry,lts)
+S3method(predict,lts)
+S3method(predict,perryTuning)
+import(perry)
+import(robustbase)
+import(stats)
