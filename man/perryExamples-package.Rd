@@ -23,6 +23,7 @@ LazyLoad: \tab yes\cr
 
 Index:
 \preformatted{
+TopGearMPG              Top Gear fuel consumption data
 ladlasso                LAD-lasso with penalty parameter selection
 lmridge                 Ridge regression with penalty parameter
                         selection
