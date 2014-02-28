@@ -138,7 +138,22 @@ ladlasso.fit <- function(x, y, lambda, standardize = TRUE,
   # scale the predictors
   if(standardize) {
     sigmaX <- apply(xs, 2, mad, center=0)
-    xs <- sweep(xs, 2, sigmaX, "/", check.margin=FALSE)# sweep out column scales
+    # fallback mode in case of zero MAD
+    tooSmall <- which(sigmaX <= .Machine$double.eps)
+    if(length(tooSmall) > 0) {
+      # center with mean if requested
+      if(intercept) {
+        # sweep out column means
+        muX[tooSmall] <- colMeans(x[, tooSmall, drop=FALSE])
+        xs[, tooSmall] <- sweep(x[, tooSmall, drop=FALSE], 2, muX[tooSmall], 
+                                check.margin=FALSE)
+      }
+      # standardize with standard deviation
+      f <- function(v) sqrt(sum(v^2) / max(1, length(v)-1))
+      sigmaX[tooSmall] <- apply(xs[, tooSmall, drop=FALSE], 2, f)
+    }
+    # sweep out column scales
+    xs <- sweep(xs, 2, sigmaX, "/", check.margin=FALSE)
   } else sigmaX <- rep.int(1, d[2])
   # compute LAD-lasso solution
   rqlasso <- function(..., tau) rq.fit.lasso(..., tau=0.5)

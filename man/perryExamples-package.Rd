@@ -31,6 +31,7 @@ perry-methods           Resampling-based prediction error for fitted
                         models
 perryExamples-package   Examples for integrating prediction error
                         estimation into regression models
+prostate                Prostate cancer data
 }
 }
 \author{

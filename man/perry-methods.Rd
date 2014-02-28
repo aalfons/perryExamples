@@ -126,18 +126,19 @@
   resampling-based prediction error estimation.
 }
 \examples{
-## load data and fit an LS regression model
-data("mtcars")
-fit <- lm(mpg ~ wt + cyl, data=mtcars)
+## load data
+data("TopGearMPG")
+TopGearMPG <- TopGearMPG[, -(1:3)]
+n <- nrow(TopGearMPG)
 
-## perform cross-validation
-# K-fold CV
+# fit linear model
+fit <- lm(MPG ~ ., data=TopGearMPG)
+
+## perform K-fold cross-validation
 perry(fit, foldControl(K = 5, R = 10), seed = 1234)
-# leave-one-out CV
-perry(fit, foldControl(K = nrow(mtcars)))
 
 ## perform random splitting
-perry(fit, splitControl(m = 6, R = 10), seed = 1234)
+perry(fit, splitControl(m = n/3, R = 10), seed = 1234)
 
 ## perform bootstrap prediction error estimation
 # 0.632 estimator
