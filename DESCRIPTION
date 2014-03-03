@@ -8,7 +8,7 @@ Depends:
     perry,
     robustbase
 Imports:
-    stats, quantreg
+    stats, quantreg, lars
 Description: Examples for integrating package perry for prediction error estimation into regression models.
 License: GPL (>= 2)
 LazyLoad: yes

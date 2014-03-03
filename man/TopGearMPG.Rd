@@ -7,7 +7,8 @@ Top Gear fuel consumption data
 \description{
 The data set contains information on fuel consumption of cars featured on the 
 website of the popular BBC television show \emph{Top Gear}, together with 
-several predictor variables.
+car information and performance measures.  Only cars with complete information 
+are included in the data set.
 }
 \usage{data("TopGearMPG")}
 \format{

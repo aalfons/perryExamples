@@ -31,17 +31,17 @@
 #' \code{\link[perry]{perryTuning}}).
 #' @param seed  optional initial seed for the random number generator (see 
 #' \code{\link{.Random.seed}} and \code{\link[perry]{perryTuning}}).
-#' @param \dots  for \code{lmridge}, additional arguments to be passed to the 
-#' prediction loss function \code{cost}.  For \code{lmridge.fit}, additional 
+#' @param \dots  for \code{ridge}, additional arguments to be passed to the 
+#' prediction loss function \code{cost}.  For \code{ridge.fit}, additional 
 #' arguments are currently ignored.
 #' 
 #' @return  
-#' For \code{lmridge}, an object of class \code{"perryTuning"}, see 
+#' For \code{ridge}, an object of class \code{"perryTuning"}, see 
 #' \code{\link[perry]{perryTuning}}).  It contains information on the 
 #' prediction error criterion, and includes the final model with the optimal 
 #' tuning paramter as component \code{finalModel}.
 #' 
-#' For \code{lmridge.fit}, an object of class \code{lmridge} with the following 
+#' For \code{ridge.fit}, an object of class \code{ridge} with the following 
 #' components:
 #' @returnItem lambda  a numeric vector containing the values of the penalty 
 #' parameter.
@@ -64,19 +64,21 @@
 #' 
 #' @references
 #' Hoerl, A.E. and Kennard, R.W. (1970) Ridge regression: biased estimation for 
-#' nonorthogonal problems. \emph{Technometrics}, \bold{12}(1), 55--67.
+#' nonorthogonal problems.  \emph{Technometrics}, \bold{12}(1), 55--67.
 #' 
 #' @seealso 
 #' \code{\link[perry]{perryTuning}}
+#' 
+#' @example inst/doc/examples/example-ridge.R
 #' 
 #' @keywords regression
 #' 
 #' @export
 
-lmridge <- function(x, y, lambda, standardize = TRUE, intercept = TRUE, 
-                    splits = foldControl(), cost = rmspe, 
-                    selectBest = c("hastie", "min"), seFactor = 1, 
-                    ncores = 1, cl = NULL, seed = NULL, ...) {
+ridge <- function(x, y, lambda, standardize = TRUE, intercept = TRUE, 
+                  splits = foldControl(), cost = rmspe, 
+                  selectBest = c("hastie", "min"), seFactor = 1, 
+                  ncores = 1, cl = NULL, seed = NULL, ...) {
   # initializations
   if(!is.numeric(lambda) || length(lambda) == 0 || any(!is.finite(lambda))) {
     stop("missing or invalid value of 'lambda'")
@@ -87,33 +89,32 @@ lmridge <- function(x, y, lambda, standardize = TRUE, intercept = TRUE,
   }
   lambda <- sort.int(unique(lambda), decreasing=TRUE)
   selectBest <- match.arg(selectBest)
-#   call <- call("lmridge.fit", lambda=lambda, intercept=intercept, 
+#   call <- call("ridge.fit", lambda=lambda, intercept=intercept, 
 #                standardize=standardize)
   args <- list(lambda=lambda, intercept=intercept, 
                standardize=standardize)
   # estimate prediction error for all values of penalty parameter
 #   pe <- perryFit(call, x=x, y=y, splits=splits, cost=cost, costArgs=list(...), 
 #                  envir=parent.frame(), ncores=ncores, cl=cl, seed=seed)
-  pe <- perryFit(lmridge.fit, x=x, y=y, args=args, splits=splits, cost=cost, 
+  pe <- perryFit(ridge.fit, x=x, y=y, args=args, splits=splits, cost=cost, 
                  costArgs=list(...), envir=parent.frame(), ncores=ncores, 
                  cl=cl, seed=seed)
   # select optimal value of penalty parameter by reshaping results
   pe <- perryReshape(pe, tuning=list(lambda=lambda), selectBest=selectBest, 
                      seFactor=seFactor)
   # add final model and return object
-  pe$finalModel <- lmridge.fit(x, y, lambda=lambda[pe$best], 
-                               intercept=intercept, 
-                               standardize=standardize)
+  pe$finalModel <- ridge.fit(x, y, lambda=lambda[pe$best], intercept=intercept, 
+                             standardize=standardize)
   pe
 }
 
 
-#' @rdname lmridge
+#' @rdname ridge
 #' @export
 #' @import quantreg
 
-lmridge.fit <- function(x, y, lambda, standardize = TRUE, 
-                        intercept = TRUE, ...) {
+ridge.fit <- function(x, y, lambda, standardize = TRUE, 
+                      intercept = TRUE, ...) {
   # initializations
   matchedCall <- match.call()
   n <- length(y)
@@ -170,6 +171,6 @@ lmridge.fit <- function(x, y, lambda, standardize = TRUE,
               residuals=residuals, standardize=standardize, 
               intercept=intercept, muX=muX, sigmaX=sigmaX, muY=muY, 
               call=matchedCall)
-  class(fit) <- "lmridge"
+  class(fit) <- "ridge"
   fit
 }

@@ -4,8 +4,10 @@
 # --------------------------------------
 
 #' @S3method predict ladlasso
-#' @S3method predict lmridge
-predict.ladlasso <- predict.lmridge <- function(object, newdata, ...) {
+#' @S3method predict lasso
+#' @S3method predict ridge
+predict.ladlasso <- predict.lasso <- predict.ridge <- function(object, newdata, 
+                                                               ...) {
   # initializations
   coef <- coef(object)
   # interpret vector as row

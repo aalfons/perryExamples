@@ -1,14 +1,16 @@
-\name{ladlasso}
-\alias{ladlasso}
-\alias{ladlasso.fit}
-\title{LAD-lasso with penalty parameter selection}
+\name{lasso}
+\alias{lasso}
+\alias{lasso.fit}
+\title{Lasso with penalty parameter selection}
 \usage{
-  ladlasso(x, y, lambda, standardize = TRUE,
-    intercept = TRUE, splits = foldControl(), cost = mape,
+  lasso(x, y, lambda = seq(1, 0, length.out = 50),
+    mode = c("fraction", "lambda"), standardize = TRUE,
+    intercept = TRUE, splits = foldControl(), cost = rmspe,
     selectBest = c("hastie", "min"), seFactor = 1,
     ncores = 1, cl = NULL, seed = NULL, ...)
 
-  ladlasso.fit(x, y, lambda, standardize = TRUE,
+  lasso.fit(x, y, lambda = seq(1, 0, length.out = 50),
+    mode = c("fraction", "lambda"), standardize = TRUE,
     intercept = TRUE, ...)
 }
 \arguments{
@@ -18,14 +20,22 @@
   \item{y}{a numeric vector containing the response
   variable.}
 
-  \item{lambda}{for \code{ladlasso}, a numeric vector of
+  \item{lambda}{for \code{lasso}, a numeric vector of
   non-negative values to be used as penalty parameter.  For
-  \code{ladlasso.fit}, a single non-negative value to be
-  used as penalty parameter.}
+  \code{lasso.fit}, a single non-negative value to be used
+  as penalty parameter.}
+
+  \item{mode}{a character string specifying the type of
+  penalty parameter.  If \code{"fraction"}, \code{lambda}
+  gives the fractions of the smallest value of the penalty
+  parameter that sets all coefficients to 0 (hence all
+  values of \code{lambda} should be in the interval [0,1]
+  in that case).  If \code{"lambda"}, \code{lambda} gives
+  the grid of values for the penalty parameter directly.}
 
   \item{standardize}{a logical indicating whether the
   predictor variables should be standardized to have unit
-  MAD (the default is \code{TRUE}).}
+  variance (the default is \code{TRUE}).}
 
   \item{intercept}{a logical indicating whether a constant
   term should be included in the model (the default is
@@ -37,8 +47,9 @@
 
   \item{cost}{a cost function measuring prediction loss
   (see \code{\link[perry]{perryTuning}} for some
-  requirements).  The default is to use the mean absolute
-  prediction error (see \code{\link[perry]{cost}}).}
+  requirements).  The default is to use the root mean
+  squared prediction error (see
+  \code{\link[perry]{cost}}).}
 
   \item{selectBest,seFactor}{arguments specifying a
   criterion for selecting the best model (see
@@ -52,21 +63,21 @@
   generator (see \code{\link{.Random.seed}} and
   \code{\link[perry]{perryTuning}}).}
 
-  \item{\dots}{for \code{ladlasso}, additional arguments to
-  be passed to the prediction loss function \code{cost}.
-  For \code{ladlasso.fit}, additional arguments to be
-  passed to \code{\link[quantreg]{rq.fit.lasso}}.}
+  \item{\dots}{for \code{lasso}, additional arguments to be
+  passed to the prediction loss function \code{cost}.  For
+  \code{lasso.fit}, additional arguments to be passed to
+  \code{\link[lars]{lars}}.}
 }
 \value{
-  For \code{ladlasso}, an object of class
+  For \code{lasso}, an object of class
   \code{"perryTuning"}, see
   \code{\link[perry]{perryTuning}}).  It contains
   information on the prediction error criterion, and
   includes the final model with the optimal tuning paramter
   as component \code{finalModel}.
 
-  For \code{ladlasso.fit}, an object of class
-  \code{ladlasso} with the following components:
+  For \code{lasso.fit}, an object of class \code{lasso}
+  with the following components:
 
   \item{lambda}{numeric; the value of the penalty
   parameter.}
@@ -81,23 +92,24 @@
   residuals.}
 
   \item{standardize}{a logical indicating whether the
-  predictor variables were standardized to have unit MAD.}
+  predictor variables were standardized to have unit
+  variance.}
 
   \item{intercept}{a logical indicating whether the model
   includes a constant term.}
 
-  \item{muX}{a numeric vector containing the medians of the
+  \item{muX}{a numeric vector containing the means of the
   predictors.}
 
-  \item{sigmaX}{a numeric vector containing the MADs of the
-  predictors.}
+  \item{sigmaX}{a numeric vector containing the standard
+  deviations of the predictors.}
 
-  \item{muY}{numeric; the median of the response.}
+  \item{muY}{numeric; the mean of the response.}
 
   \item{call}{the matched function call.}
 }
 \description{
-  Fit LAD-lasso models and select the penalty parameter by
+  Fit lasso models and select the penalty parameter by
   estimating the respective prediction error via (repeated)
   \eqn{K}-fold cross-validation, (repeated) random
   splitting (also known as random subsampling or Monte
@@ -116,8 +128,7 @@ y <- model.response(mf)
 splits <- splitControl(m = 40, R = 10)
 
 ## select optimal penalty parameter
-lambda <- seq(40, 0, length.out = 20)
-fit <- ladlasso(x, y, lambda = lambda, splits = splits, seed = 2014)
+fit <- lasso(x, y, splits = splits, seed = 2014)
 fit
 
 ## plot prediction error results
@@ -127,14 +138,13 @@ plot(fit, method = "line")
   Andreas Alfons
 }
 \references{
-  Wang, H., Li, G. and Jiang, G. (2007) Robust regression
-  shrinkage and consistent variable selection through the
-  LAD-lasso.  \emph{Journal of Business & Economic
-  Statistics}, \bold{25}(3), 347--355.
+  Tibshirani, R. (1996) Regression shrinkage and selection
+  via the lasso.  \emph{Journal of the Royal Statistical
+  Society, Series B}, \bold{58}(1), 267--288.
 }
 \seealso{
   \code{\link[perry]{perryTuning}},
-  \code{\link[quantreg]{rq.fit.lasso}}
+  \code{\link[lars]{lars}}
 }
 \keyword{regression}
 \keyword{robust}

@@ -1,14 +1,14 @@
-\name{lmridge}
-\alias{lmridge}
-\alias{lmridge.fit}
+\name{ridge}
+\alias{ridge}
+\alias{ridge.fit}
 \title{Ridge regression with penalty parameter selection}
 \usage{
-  lmridge(x, y, lambda, standardize = TRUE,
-    intercept = TRUE, splits = foldControl(), cost = rmspe,
+  ridge(x, y, lambda, standardize = TRUE, intercept = TRUE,
+    splits = foldControl(), cost = rmspe,
     selectBest = c("hastie", "min"), seFactor = 1,
     ncores = 1, cl = NULL, seed = NULL, ...)
 
-  lmridge.fit(x, y, lambda, standardize = TRUE,
+  ridge.fit(x, y, lambda, standardize = TRUE,
     intercept = TRUE, ...)
 }
 \arguments{
@@ -51,20 +51,20 @@
   generator (see \code{\link{.Random.seed}} and
   \code{\link[perry]{perryTuning}}).}
 
-  \item{\dots}{for \code{lmridge}, additional arguments to
-  be passed to the prediction loss function \code{cost}.
-  For \code{lmridge.fit}, additional arguments are
-  currently ignored.}
+  \item{\dots}{for \code{ridge}, additional arguments to be
+  passed to the prediction loss function \code{cost}.  For
+  \code{ridge.fit}, additional arguments are currently
+  ignored.}
 }
 \value{
-  For \code{lmridge}, an object of class
+  For \code{ridge}, an object of class
   \code{"perryTuning"}, see
   \code{\link[perry]{perryTuning}}).  It contains
   information on the prediction error criterion, and
   includes the final model with the optimal tuning paramter
   as component \code{finalModel}.
 
-  For \code{lmridge.fit}, an object of class \code{lmridge}
+  For \code{ridge.fit}, an object of class \code{ridge}
   with the following components:
 
   \item{lambda}{a numeric vector containing the values of
@@ -102,6 +102,26 @@
   via (repeated) \eqn{K}-fold cross-validation, (repeated)
   random splitting (also known as random subsampling or
   Monte Carlo cross-validation), or the bootstrap.
+}
+\examples{
+## load data
+data("Bundesliga")
+Bundesliga <- Bundesliga[, -(1:2)]
+f <- log(MarketValue) ~ Age + I(Age^2) + .
+mf <- model.frame(f, data=Bundesliga)
+x <- model.matrix(terms(mf), mf)[, -1]
+y <- model.response(mf)
+
+## set up repeated random splits
+splits <- splitControl(m = 40, R = 10)
+
+## select optimal penalty parameter
+lambda <- seq(600, 0, length.out = 50)
+fit <- ridge(x, y, lambda = lambda, splits = splits, seed = 2014)
+fit
+
+## plot prediction error results
+plot(fit, method = "line")
 }
 \author{
   Andreas Alfons

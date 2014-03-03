@@ -62,11 +62,13 @@
 #' 
 #' @references
 #' Wang, H., Li, G. and Jiang, G. (2007) Robust regression shrinkage and 
-#' consistent variable selection through the LAD-lasso. \emph{Journal of 
+#' consistent variable selection through the LAD-lasso.  \emph{Journal of 
 #' Business & Economic Statistics}, \bold{25}(3), 347--355.
 #' 
 #' @seealso 
 #' \code{\link[perry]{perryTuning}}, \code{\link[quantreg]{rq.fit.lasso}}
+#' 
+#' @example inst/doc/examples/example-ladlasso.R
 #' 
 #' @keywords regression robust
 #' 

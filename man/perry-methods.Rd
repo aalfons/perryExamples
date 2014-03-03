@@ -131,7 +131,7 @@ data("TopGearMPG")
 TopGearMPG <- TopGearMPG[, -(1:3)]
 n <- nrow(TopGearMPG)
 
-# fit linear model
+## fit linear model
 fit <- lm(MPG ~ ., data=TopGearMPG)
 
 ## perform K-fold cross-validation
