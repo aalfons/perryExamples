@@ -1,10 +1,11 @@
 ## load data
-data("TopGearMPG")
-TopGearMPG <- TopGearMPG[, -(1:3)]
-n <- nrow(TopGearMPG)
+data("Bundesliga")
+n <- nrow(Bundesliga)
 
 ## fit linear model
-fit <- lm(MPG ~ ., data=TopGearMPG)
+Bundesliga$logMarketValue <- log(Bundesliga$MarketValue)
+fit <- lm(logMarketValue ~ Contract + Matches + Goals + Assists, 
+          data=Bundesliga)
 
 ## perform K-fold cross-validation
 perry(fit, foldControl(K = 5, R = 10), seed = 1234)
