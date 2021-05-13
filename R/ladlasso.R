@@ -4,79 +4,83 @@
 # --------------------------------------
 
 #' LAD-lasso with penalty parameter selection
-#' 
-#' Fit LAD-lasso models and select the penalty parameter by estimating the 
-#' respective prediction error via (repeated) \eqn{K}-fold cross-validation, 
-#' (repeated) random splitting (also known as random subsampling or Monte Carlo 
+#'
+#' Fit LAD-lasso models and select the penalty parameter by estimating the
+#' respective prediction error via (repeated) \eqn{K}-fold cross-validation,
+#' (repeated) random splitting (also known as random subsampling or Monte Carlo
 #' cross-validation), or the bootstrap.
-#' 
+#'
 #' @param x  a numeric matrix containing the predictor variables.
 #' @param y  a numeric vector containing the response variable.
-#' @param lambda  for \code{ladlasso}, a numeric vector of non-negative values 
-#' to be used as penalty parameter.  For \code{ladlasso.fit}, a single 
+#' @param lambda  for \code{ladlasso}, a numeric vector of non-negative values
+#' to be used as penalty parameter.  For \code{ladlasso.fit}, a single
 #' non-negative value to be used as penalty parameter.
-#' @param standardize  a logical indicating whether the predictor variables 
+#' @param standardize  a logical indicating whether the predictor variables
 #' should be standardized to have unit MAD (the default is \code{TRUE}).
-#' @param intercept  a logical indicating whether a constant term should be 
+#' @param intercept  a logical indicating whether a constant term should be
 #' included in the model (the default is \code{TRUE}).
-#' @param splits  an object giving data splits to be used for prediction error 
+#' @param splits  an object giving data splits to be used for prediction error
 #' estimation (see \code{\link[perry]{perryTuning}}).
-#' @param cost  a cost function measuring prediction loss (see 
-#' \code{\link[perry]{perryTuning}} for some requirements).  The 
-#' default is to use the mean absolute prediction error (see 
+#' @param cost  a cost function measuring prediction loss (see
+#' \code{\link[perry]{perryTuning}} for some requirements).  The
+#' default is to use the mean absolute prediction error (see
 #' \code{\link[perry]{cost}}).
-#' @param selectBest,seFactor  arguments specifying a criterion for selecting 
-#' the best model (see \code{\link[perry]{perryTuning}}).  The default is to 
+#' @param selectBest,seFactor  arguments specifying a criterion for selecting
+#' the best model (see \code{\link[perry]{perryTuning}}).  The default is to
 #' use a one-standard-error rule.
-#' @param ncores,cl  arguments for parallel computing (see 
+#' @param ncores,cl  arguments for parallel computing (see
 #' \code{\link[perry]{perryTuning}}).
-#' @param seed  optional initial seed for the random number generator (see 
+#' @param seed  optional initial seed for the random number generator (see
 #' \code{\link{.Random.seed}} and \code{\link[perry]{perryTuning}}).
-#' @param \dots  for \code{ladlasso}, additional arguments to be passed to the 
-#' prediction loss function \code{cost}.  For \code{ladlasso.fit}, additional 
+#' @param \dots  for \code{ladlasso}, additional arguments to be passed to the
+#' prediction loss function \code{cost}.  For \code{ladlasso.fit}, additional
 #' arguments to be passed to \code{\link[quantreg]{rq.fit.lasso}}.
-#' 
-#' @return  
-#' For \code{ladlasso}, an object of class \code{"perryTuning"}, see 
-#' \code{\link[perry]{perryTuning}}).  It contains information on the 
-#' prediction error criterion, and includes the final model with the optimal 
+#'
+#' @return
+#' For \code{ladlasso}, an object of class \code{"perryTuning"}, see
+#' \code{\link[perry]{perryTuning}}).  It contains information on the
+#' prediction error criterion, and includes the final model with the optimal
 #' tuning paramter as component \code{finalModel}.
-#' 
-#' For \code{ladlasso.fit}, an object of class \code{ladlasso} with the 
+#'
+#' For \code{ladlasso.fit}, an object of class \code{ladlasso} with the
 #' following components:
-#' @returnItem lambda  numeric; the value of the penalty parameter.
-#' @returnItem coefficients  a numeric vector containing the coefficient 
-#' estimates.
-#' @returnItem fitted.values  a numeric vector containing the fitted values.
-#' @returnItem residuals  a numeric vector containing the residuals.
-#' @returnItem standardize  a logical indicating whether the predictor 
-#' variables were standardized to have unit MAD.
-#' @returnItem intercept  a logical indicating whether the model includes a 
-#' constant term.
-#' @returnItem muX  a numeric vector containing the medians of the predictors.
-#' @returnItem sigmaX  a numeric vector containing the MADs of the predictors.
-#' @returnItem muY  numeric; the median of the response.
-#' @returnItem call  the matched function call.
-#' 
+#' \describe{
+#'   \item{\code{lambda}}{numeric; the value of the penalty parameter.}
+#'   \item{\code{coefficients}}{a numeric vector containing the coefficient
+#'   estimates.}
+#'   \item{\code{fitted.values}}{a numeric vector containing the fitted values.}
+#'   \item{\code{residuals}}{a numeric vector containing the residuals.}
+#'   \item{\code{standardize}}{a logical indicating whether the predictor
+#'   variables were standardized to have unit MAD.}
+#'   \item{\code{intercept}}{a logical indicating whether the model includes a
+#'   constant term.}
+#'   \item{\code{muX}}{a numeric vector containing the medians of the
+#'   predictors.}
+#'   \item{\code{sigmaX}}{a numeric vector containing the MADs of the
+#'   predictors.}
+#'   \item{\code{muY}}{numeric; the median of the response.}
+#'   \item{\code{call}}{the matched function call.}
+#' }
+#'
 #' @author Andreas Alfons
-#' 
+#'
 #' @references
-#' Wang, H., Li, G. and Jiang, G. (2007) Robust regression shrinkage and 
-#' consistent variable selection through the LAD-lasso.  \emph{Journal of 
+#' Wang, H., Li, G. and Jiang, G. (2007) Robust regression shrinkage and
+#' consistent variable selection through the LAD-lasso.  \emph{Journal of
 #' Business & Economic Statistics}, \bold{25}(3), 347--355.
-#' 
-#' @seealso 
+#'
+#' @seealso
 #' \code{\link[perry]{perryTuning}}, \code{\link[quantreg]{rq.fit.lasso}}
-#' 
+#'
 #' @example inst/doc/examples/example-ladlasso.R
-#' 
+#'
 #' @keywords regression robust
-#' 
+#'
 #' @export
 
-ladlasso <- function(x, y, lambda, standardize = TRUE, intercept = TRUE, 
-                     splits = foldControl(), cost = mape, 
-                     selectBest = c("hastie", "min"), seFactor = 1, 
+ladlasso <- function(x, y, lambda, standardize = TRUE, intercept = TRUE,
+                     splits = foldControl(), cost = mape,
+                     selectBest = c("hastie", "min"), seFactor = 1,
                      ncores = 1, cl = NULL, seed = NULL, ...) {
   # initializations
   if(!is.numeric(lambda) || length(lambda) == 0 || any(!is.finite(lambda))) {
@@ -90,15 +94,15 @@ ladlasso <- function(x, y, lambda, standardize = TRUE, intercept = TRUE,
   selectBest <- match.arg(selectBest)
 #   call <- call("ladlasso.fit", intercept=intercept, standardize=standardize)
   args <- list(intercept=intercept, standardize=standardize)
-  # estimate prediction error for each value of penalty parameter 
+  # estimate prediction error for each value of penalty parameter
   # and add final model
-#   perryTuning(call, x=x, y=y, tuning=list(lambda=lambda), splits=splits, 
-#               cost=cost, costArgs=list(...), selectBest=selectBest, 
-#               seFactor=seFactor, final=TRUE, envir=parent.frame(), 
+#   perryTuning(call, x=x, y=y, tuning=list(lambda=lambda), splits=splits,
+#               cost=cost, costArgs=list(...), selectBest=selectBest,
+#               seFactor=seFactor, final=TRUE, envir=parent.frame(),
 #               ncores=ncores, cl=cl, seed=seed)
-  perryTuning(ladlasso.fit, x=x, y=y, args=args, tuning=list(lambda=lambda), 
-              splits=splits, cost=cost, costArgs=list(...), 
-              selectBest=selectBest, seFactor=seFactor, final=TRUE, 
+  perryTuning(ladlasso.fit, x=x, y=y, args=args, tuning=list(lambda=lambda),
+              splits=splits, cost=cost, costArgs=list(...),
+              selectBest=selectBest, seFactor=seFactor, final=TRUE,
               envir=parent.frame(), ncores=ncores, cl=cl, seed=seed)
 }
 
@@ -107,7 +111,7 @@ ladlasso <- function(x, y, lambda, standardize = TRUE, intercept = TRUE,
 #' @export
 #' @import quantreg
 
-ladlasso.fit <- function(x, y, lambda, standardize = TRUE, 
+ladlasso.fit <- function(x, y, lambda, standardize = TRUE,
                          intercept = TRUE, ...) {
   # initializations
   matchedCall <- match.call()
@@ -147,7 +151,7 @@ ladlasso.fit <- function(x, y, lambda, standardize = TRUE,
       if(intercept) {
         # sweep out column means
         muX[tooSmall] <- colMeans(x[, tooSmall, drop=FALSE])
-        xs[, tooSmall] <- sweep(x[, tooSmall, drop=FALSE], 2, muX[tooSmall], 
+        xs[, tooSmall] <- sweep(x[, tooSmall, drop=FALSE], 2, muX[tooSmall],
                                 check.margin=FALSE)
       }
       # standardize with standard deviation
@@ -161,15 +165,15 @@ ladlasso.fit <- function(x, y, lambda, standardize = TRUE,
   rqlasso <- function(..., tau) rq.fit.lasso(..., tau=0.5)
   fit <- rqlasso(xs, z, lambda=rep_len(lambda, d[2]), ...)
   # back-transform coefficients
-  coef <- backtransform(coef(fit), muX=muX, sigmaX=sigmaX, muY=muY, 
+  coef <- backtransform(coef(fit), muX=muX, sigmaX=sigmaX, muY=muY,
                         intercept=intercept)
   # compute fitted values and residuals
   residuals <- drop(residuals(fit))
   fitted <- y - residuals
   # construct return object
-  fit <- list(lambda=lambda, coefficients=coef, fitted.values=fitted, 
-              residuals=residuals, standardize=standardize, 
-              intercept=intercept, muX=muX, sigmaX=sigmaX, muY=muY, 
+  fit <- list(lambda=lambda, coefficients=coef, fitted.values=fitted,
+              residuals=residuals, standardize=standardize,
+              intercept=intercept, muX=muX, sigmaX=sigmaX, muY=muY,
               call=matchedCall)
   class(fit) <- "ladlasso"
   fit

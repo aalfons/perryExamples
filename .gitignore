@@ -4,4 +4,6 @@
 *-Ex.R
 .Rproj.user
 .Rbuildignore
-perryExamples.Rproj
+
+# MacOS files
+*DS_Store

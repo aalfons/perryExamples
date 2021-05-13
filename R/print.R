@@ -3,9 +3,8 @@
 #         Erasmus Universiteit Rotterdam
 # --------------------------------------
 
-#' @S3method print ladlasso
-#' @S3method print lasso
-print.ladlasso <- print.lasso <- function(x, zeros = FALSE, ...) {
+## print method shared by lasso-type methods
+print_lasso_type <- function(x, zeros = FALSE, ...) {
   # print coefficients
   cat("\nCoefficients:\n")
   print(coef(x, zeros=zeros), ...)
@@ -13,7 +12,13 @@ print.ladlasso <- print.lasso <- function(x, zeros = FALSE, ...) {
   invisible(x)
 }
 
-#' @S3method print ridge
+#' @export
+print.lasso <- print_lasso_type
+
+#' @export
+print.ladlasso <- print_lasso_type
+
+#' @export
 print.ridge <- function(x, ...) {
   # print coefficients
   cat("\nCoefficients:\n")
