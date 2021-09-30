@@ -2,14 +2,14 @@ Package: perryExamples
 Type: Package
 Title: Examples for Integrating Prediction Error Estimation into Regression Models
 Version: 0.1.0
-Date: 2021-05-13
+Date: 2021-09-30
 Depends:
     R (>= 2.14.1),
     perry (>= 0.3.0),
     robustbase
 Imports:
     stats, quantreg, lars
-Description: Examples for integrating package perry for prediction error estimation into regression models.
+Description: Examples for integrating package 'perry' for prediction error estimation into regression models.
 License: GPL (>= 2)
 LazyLoad: yes
 Authors@R: person("Andreas", "Alfons",
@@ -18,4 +18,4 @@ Authors@R: person("Andreas", "Alfons",
 Author: Andreas Alfons [aut, cre]
 Maintainer: Andreas Alfons <alfons@ese.eur.nl>
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
